@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { PlusCircle } from "lucide-react"
+import { PlusCircle, Trash } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -87,6 +87,21 @@ export function ExerciseTracker() {
     }
   }
 
+  const deleteExercise = async (id: number) => {
+    try {
+      const response = await fetch(`/api/exercise/${id}`, {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        setExercises(exercises.filter(exercise => exercise.id !== id))
+      } else {
+        console.error("Failed to delete exercise.")
+      }
+    } catch (error) {
+      console.error("Error deleting exercise:", error)
+    }
+  }
+
   if (isLoading) {
     return (
       <Card>
@@ -166,7 +181,17 @@ export function ExerciseTracker() {
                     {exercise.duration} min • {exercise.time}
                   </div>
                 </div>
-                <div className="text-sm font-medium">{exercise.caloriesBurned} kcal</div>
+                <div className="flex items-center gap-4">
+                  <div className="text-sm font-medium">{exercise.caloriesBurned} kcal</div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => deleteExercise(exercise.id)}
+                    className="text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    <Trash className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
             ))
           ) : (

@@ -87,3 +87,42 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Failed to fetch dashboard data" }, { status: 500 })
   }
 }
+
+export async function PUT(request: Request) {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  try {
+    const userId = session.user.id
+    const data = await request.json()
+
+    const { calories, protein, carbs, fat } = data
+
+    // Try to update the existing nutrition log for today
+    const result = await sql`
+      UPDATE nutrition_logs
+      SET protein = ${protein}, carbs = ${carbs}, fat = ${fat}, calories = ${calories}
+      WHERE user_id = ${userId} AND date = CURRENT_DATE
+      RETURNING *
+    `
+
+    // If no rows were updated, insert a new record
+    if (result.length === 0) {
+      const insertResult = await sql`
+        INSERT INTO nutrition_logs (user_id, date, protein, carbs, fat, calories)
+        VALUES (${userId}, CURRENT_DATE, ${protein}, ${carbs}, ${fat}, ${calories})
+        RETURNING *
+      `
+      return NextResponse.json(insertResult[0]) // Return the inserted record
+    }
+
+    // If update was successful, return the updated record
+    return NextResponse.json(result[0]) // Return the updated nutrition log
+  } catch (error) {
+    console.error("Error updating/inserting nutrition log:", error)
+    return NextResponse.json({ error: "Failed to update or insert nutrition log" }, { status: 500 })
+  }
+}
