@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { UserNav } from "@/components/user-nav"
-import { Users, MessageSquare } from "lucide-react"
+import { Users, MessageSquare, Clock, MapPin } from "lucide-react"
 
 export default function MarketplacePage() {
   return (
@@ -13,7 +13,7 @@ export default function MarketplacePage() {
       <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Marketplace</h1>
-          <p className="text-sm text-muted-foreground">Find diet plans that work for you</p>
+          <p className="text-sm text-muted-foreground">Find nearby stores with fresh, nutritious meals</p>
         </div>
         <UserNav />
       </header>
@@ -32,7 +32,7 @@ export default function MarketplacePage() {
           </div>
           <h3 className="text-lg font-medium mb-2">Join the Nourisia Community</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Connect with other fitness enthusiasts, share your progress, and get motivated together.
+            Connect with others, share experiences, and find your go-to healthy food spots.
           </p>
           <Button className="relative">
             Explore Community
@@ -44,67 +44,75 @@ export default function MarketplacePage() {
       </Card>
 
       <div className="grid gap-4">
-        <Card>
-          <CardHeader className="p-0">
-            <div className="relative h-40 w-full">
-              <Image
-                src="/placeholder.svg?height=160&width=400"
-                alt="Keto Diet Plan"
-                fill
-                className="object-cover rounded-t-lg"
-              />
-              <Badge className="absolute top-2 right-2">Popular</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4">
-            <CardTitle className="text-lg mb-2">Keto Diet Plan</CardTitle>
-            <p className="text-sm text-muted-foreground mb-2">
-              A 30-day ketogenic diet plan designed for maximum fat loss while maintaining muscle mass.
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="font-bold">$29.99</span>
-              <div className="flex items-center">
-                <span className="text-sm mr-1">4.8</span>
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className="w-4 h-4 fill-primary" viewBox="0 0 24 24">
-                      <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
-                    </svg>
-                  ))}
+        {[
+          {
+            name: "Nourisia",
+            description: "Your go-to store for organic, fresh, and local healthy food.",
+            delivery: "15-25 min",
+            distance: "2.4 km",
+            rating: 4.8,
+            logo: "/icons/nourisia-market.png",
+            popular: true,
+          },
+          {
+            name: "Plant Power Deli",
+            description: "Vegan and gluten-free meals crafted with care.",
+            delivery: "20-30 min",
+            distance: "3.1 km",
+            rating: 4.6,
+            logo: "/placeholder.svg?height=160&width=400",
+            popular: false,
+          },
+          {
+            name: "Muscle Fuel Kitchen",
+            description: "Protein-packed meals for fitness-focused lifestyles.",
+            delivery: "10-20 min",
+            distance: "1.8 km",
+            rating: 4.9,
+            logo: "/placeholder.svg?height=160&width=400",
+            popular: false,
+          },
+        ].map((store, idx) => (
+          <Card key={idx}>
+            <CardHeader className="p-0">
+              <div className="relative h-40 w-full">
+                <Image
+                  src={store.logo}
+                  alt={store.name}
+                  fill
+                  className="object-cover rounded-t-lg"
+                />
+                {store.popular && (
+                  <Badge className="absolute top-2 right-2">Popular</Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <CardTitle className="text-lg mb-1">{store.name}</CardTitle>
+              <p className="text-sm text-muted-foreground mb-2">{store.description}</p>
+
+              {/* Delivery Time and Distance */}
+              <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  <span>{store.delivery}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  <span>{store.distance}</span>
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <Button className="w-full">Buy Now</Button>
-          </CardFooter>
-        </Card>
 
-        <Card>
-          <CardHeader className="p-0">
-            <div className="relative h-40 w-full">
-              <Image
-                src="/placeholder.svg?height=160&width=400"
-                alt="Vegan Meal Plan"
-                fill
-                className="object-cover rounded-t-lg"
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="p-4">
-            <CardTitle className="text-lg mb-2">Vegan Meal Plan</CardTitle>
-            <p className="text-sm text-muted-foreground mb-2">
-              Complete plant-based nutrition with delicious recipes for 4 weeks.
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="font-bold">$24.99</span>
+              {/* Rating */}
               <div className="flex items-center">
-                <span className="text-sm mr-1">4.6</span>
+                <span className="text-sm mr-1">{store.rating}</span>
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg
                       key={star}
-                      className={`w-4 h-4 ${star === 5 ? "fill-muted-foreground" : "fill-primary"}`}
+                      className={`w-4 h-4 ${
+                        star <= Math.round(store.rating) ? "fill-primary" : "fill-muted-foreground"
+                      }`}
                       viewBox="0 0 24 24"
                     >
                       <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
@@ -112,47 +120,12 @@ export default function MarketplacePage() {
                   ))}
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <Button className="w-full">Buy Now</Button>
-          </CardFooter>
-        </Card>
-
-        <Card>
-          <CardHeader className="p-0">
-            <div className="relative h-40 w-full">
-              <Image
-                src="/placeholder.svg?height=160&width=400"
-                alt="Muscle Building Plan"
-                fill
-                className="object-cover rounded-t-lg"
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="p-4">
-            <CardTitle className="text-lg mb-2">Muscle Building Plan</CardTitle>
-            <p className="text-sm text-muted-foreground mb-2">
-              High protein meal plan designed for muscle growth and recovery.
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="font-bold">$34.99</span>
-              <div className="flex items-center">
-                <span className="text-sm mr-1">4.9</span>
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg key={star} className="w-4 h-4 fill-primary" viewBox="0 0 24 24">
-                      <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
-                    </svg>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <Button className="w-full">Buy Now</Button>
-          </CardFooter>
-        </Card>
+            </CardContent>
+            <CardFooter className="p-4 pt-0">
+              <Button className="w-full">View Store</Button>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     </div>
   )
