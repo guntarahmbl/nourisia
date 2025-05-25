@@ -200,16 +200,15 @@ export default function LoginPage() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="relative w-24 h-24 mb-4">
+          <div className="relative w-44 h-44 mb-1">
             <Image
-              src="/placeholder.svg?height=96&width=96"
+              src="/nourisia-logo.jpg?height=1000&width=1000"
               alt="Nourisia Logo"
-              width={96}
-              height={96}
+              width={1000}
+              height={1000}
               className="rounded-full bg-primary/10"
             />
           </div>
-          <h1 className="text-3xl font-bold">Nourisia</h1>
           <p className="text-sm text-muted-foreground">Your personal macronutrient tracker</p>
         </div>
 
