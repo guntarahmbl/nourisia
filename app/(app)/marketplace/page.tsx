@@ -60,7 +60,7 @@ export default function MarketplacePage() {
             delivery: "20-30 min",
             distance: "3.1 km",
             rating: 4.6,
-            logo: "/placeholder.svg?height=160&width=400",
+            logo: "/store1.jpg",
             popular: false,
           },
           {
@@ -69,7 +69,7 @@ export default function MarketplacePage() {
             delivery: "10-20 min",
             distance: "1.8 km",
             rating: 4.9,
-            logo: "/placeholder.svg?height=160&width=400",
+            logo: "/store2.jpg",
             popular: false,
           },
         ].map((store, idx) => (

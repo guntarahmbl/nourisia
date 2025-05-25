@@ -27,7 +27,6 @@ export const authOptions: NextAuthOptions = {
           const users = await sql`
             SELECT * FROM users WHERE email = ${credentials.email}
           `
-          console.log(users, " lah gimana"); 
           if (users.length === 0) {
             return null
           }

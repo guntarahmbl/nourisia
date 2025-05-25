@@ -52,24 +52,36 @@ export default function LoginPage() {
     try {
       setIsLoggingIn(true)
       const result = await signIn("credentials", {
-        email,
+        email: email.toLowerCase(),
         password,
         redirect: false,
       })
 
       if (result?.error) {
+        if (result.error === "CredentialsSignin") {
+          toast({
+            title: "Login Failed",
+            description: "Invalid email or password. Please check your credentials and try again.",
+            variant: "destructive",
+          })
+        } else {
+          toast({
+            title: "Login Failed",
+            description: "Unable to sign in at this time. Please try again later.",
+            variant: "destructive",
+          })
+        }
+      } else if (result?.ok) {
         toast({
-          title: "Login failed",
-          description: "Invalid email or password",
-          variant: "destructive",
+          title: "Welcome back!",
+          description: "You have been successfully logged in.",
         })
-      } else {
         router.push("/dashboard")
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Login Failed",
+        description: "Network error. Please check your connection and try again.",
         variant: "destructive",
       })
     } finally {
@@ -99,6 +111,15 @@ export default function LoginPage() {
       return
     }
 
+    if (registerPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      })
+      return
+    }
+
     try {
       setIsRegistering(true)
 
@@ -118,12 +139,18 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to register")
+        // Show specific error message from server
+        toast({
+          title: "Registration Failed",
+          description: data.error || "An unexpected error occurred",
+          variant: "destructive",
+        })
+        return
       }
 
       toast({
-        title: "Registration successful",
-        description: "You can now log in with your credentials",
+        title: "Registration Successful!",
+        description: "Your account has been created. You can now log in with your credentials.",
       })
 
       // Clear the form
@@ -133,11 +160,14 @@ export default function LoginPage() {
       setConfirmPassword("")
 
       // Switch to login tab
-      document.getElementById("login-tab")?.click()
+      const loginTab = document.querySelector('[data-value="login"]') as HTMLElement
+      if (loginTab) {
+        loginTab.click()
+      }
     } catch (error: any) {
       toast({
-        title: "Registration failed",
-        description: error.message || "An unexpected error occurred",
+        title: "Registration Failed",
+        description: "Network error. Please check your connection and try again.",
         variant: "destructive",
       })
     } finally {
@@ -170,16 +200,16 @@ export default function LoginPage() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="relative w-44 h-44 mb-1">
+          <div className="relative w-24 h-24 mb-4">
             <Image
-              src="/nourisia-logo.jpg?height=1000&width=1000"
+              src="/placeholder.svg?height=96&width=96"
               alt="Nourisia Logo"
-              width={1000}
-              height={1000}
+              width={96}
+              height={96}
               className="rounded-full bg-primary/10"
             />
           </div>
-          {/* <h1 className="text-3xl font-bold">Nourisia</h1> */}
+          <h1 className="text-3xl font-bold">Nourisia</h1>
           <p className="text-sm text-muted-foreground">Your personal macronutrient tracker</p>
         </div>
 
@@ -222,10 +252,12 @@ export default function LoginPage() {
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login" id="login-tab">
+            <TabsTrigger value="login" data-value="login">
               Login
             </TabsTrigger>
-            <TabsTrigger value="register">Register</TabsTrigger>
+            <TabsTrigger value="register" data-value="register">
+              Register
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <Card>
